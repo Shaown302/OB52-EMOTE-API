@@ -483,11 +483,46 @@ async def MaiiiinE():
     print(f" - Insta > krix_i43 | File by ! (:")    
     await asyncio.gather(task1 , task2)
     
+import os
+import asyncio
+from aiohttp import web
+
+# ================= Web Server (For Render Port Detection) =================
+
+async def health(request):
+    return web.Response(text="Service is running ✅")
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get("/", health)
+
+    port = int(os.environ.get("PORT", 10000))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+
+    print(f"[✓] Web server started on port {port}")
+
+
+# ================= Your Original Loop =================
+
 async def StarTinG():
     while True:
-        try: await asyncio.wait_for(MaiiiinE() , timeout = 7 * 60 * 60)
-        except asyncio.TimeoutError: print("Token ExpiRed ! , ResTartinG")
-        except Exception as e: print(f"ErroR TcP - {e} => ResTarTinG ...")
+        try:
+            await asyncio.wait_for(MaiiiinE(), timeout=7 * 60 * 60)
+        except asyncio.TimeoutError:
+            print("Token ExpiRed ! , ResTartinG")
+        except Exception as e:
+            print(f"ErroR TcP - {e} => ResTarTinG ...")
+
+
+# ================= Combined Runner =================
+
+async def main():
+    await start_web_server()   # 👈 This opens the required port
+    await StarTinG()           # 👈 Your original logic
+
 
 if __name__ == '__main__':
-    asyncio.run(StarTinG())
+    asyncio.run(main())
